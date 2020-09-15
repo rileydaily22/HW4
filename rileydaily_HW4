@@ -1,0 +1,105 @@
+---
+title: "HW4"
+author: "Riley Daily"
+date: "9/14/2020"
+output: pdf_document
+---
+
+# HW 4
+```{r}
+library(tidyverse)
+library(truncnorm)
+```
+
+Note this homework is a little shorter than it would normally be due to project 1. Most of the data visualization will be on project 1.
+
+### 1. (ROS 2.7) 2 points
+
+- a. Give an example of a scenario of measurements that have validity but not reliability.
+
+This would be like a clock that is not working. It would be right twice a day and there for valid at those times but not reliable for the rest of the day. 
+
+- b. Give an example of a scenario of measurements that have reliability but not validity.
+
+This would be like tape measure that is missing a 1/4 inch out of every inch marker. This tape measure would be just as reliable as any other tape measure but it would not be valid because all the measurements would be in correct. 
+
+
+### 2. (ROS 3.3) 2 points
+
+Using R, graph probability densities for the normal distribution, plotting several different curves corresponding to different choices of mean and standard deviation parameters.
+
+```{r}
+x <- seq(-10, 10, .1)
+
+y1 <- dnorm(x, mean = 0, sd = 1)
+y2  <- dnorm(x, mean = 2, sd = .5)
+y3 <- dnorm(x, mean = -1, sd = 3)
+y4<- dnorm(x, mean = 5, sd = 5)
+
+
+matplot(x = x,
+        y = cbind(y1, y2, y3, y4),
+        type = "l",
+        lty = 1,
+        col = c("red", "blue","green", "orange"),
+        xlab = "values",
+        ylab = "densities",
+        main = "Plot of 4 different densities of normal distributions")
+```
+
+### 3. (ROS 3.6) 4 points
+
+A test is graded from 0 to 50, with an average score of 35 and a standard deviation of 10. For comparison to other tests, it would be convenient to rescale to a mean of 100 and a standard deviation of 15.
+
+- a. Label the original test scores as $x$ and the rescaled scores as $y$, come up with a linear transformation ($y = ax _ b$) so that y has mean 100 and standard deviation 15.
+```{r}
+x_3 <- 35 + 10 * rnorm(50, 0, 1)
+x_3 <- x_3[x_3 <=50]
+hist(x_3)
+
+scores_new <- rep(0,50)
+a = 1.5
+b = 65
+
+
+for (i in 1:length(x_3)) {
+  scores_new[i] <- (a) * x_3[i] + b
+  
+}
+
+hist(scores_new)
+
+mean(x_3)
+sd(x_3)
+
+
+mean(scores_new)
+sd(scores_new)
+
+max(scores_new)
+min(scores_new)
+```
+
+- b. what is the range of possible values for $y$?
+
+The range of values that y takes on in our simulation was from 76.79 to 139.61. In theory from the equation the most of the values should range from plus or minus about two standard deviations from 100 which should be about plus or minus 30. We can see that the transformation of our data did range a little bit higher than this because our mean ended up a little higher than 100.
+
+
+- c. Simulate 100 test scores for $x$ from a truncated normal distribution with mean 35 and standard deviation of 10 (hint: [https://cran.r-project.org/web/packages/TruncatedNormal/TruncatedNormal.pdf](https://cran.r-project.org/web/packages/TruncatedNormal/TruncatedNormal.pdf)). Then create a plot with $x$ and $y$. 
+```{r}
+x_c <- seq(1,150,1)
+scores_Cx <- dtruncnorm(x_c,0,50, 35, 10)
+
+scores_cy <- dtruncnorm(x_c,0,150, 100, 15)
+
+matplot(x = x_c,
+        y = cbind(scores_Cx,scores_cy),
+        type = "l",
+        lty = 1,
+        col = c("green", "orange"),
+        xlab = "values",
+        ylab = "densities",
+        xlim =  c(0,155),
+        main = "Plot of X (mu = 35, sd = 10 in green) and Y(my = 100, sd = 15 in orange)")
+
+```
